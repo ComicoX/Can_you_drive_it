@@ -1,0 +1,39 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Spatial
+
+export(Array, NodePath) var MarkerArray := []
+
+var counter = 0
+var markers = 1
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	markers = MarkerArray.size()
+	GameVars.next_checkpoint = MarkerArray[counter]
+	GameVars.current_checkpoint = counter + 1
+	GameVars.total_checkpoints = markers
+	GameVars.Checkpoint_manager = self
+	
+func next():
+	counter += 1
+	if(counter == 1):
+		GameVars.Start_TIme = OS.get_time()
+		GameVars.Gui_Node.count = true
+		
+	if(counter <= markers - 1):
+		GameVars.next_checkpoint = MarkerArray[counter]
+		GameVars.Gui_Node.update_Checpoint_label(counter + 1, markers)
+		GameVars.internal_score += 20
+		if(GameVars.Player.Throtle):
+			GameVars.internal_score += GameVars.Player.Throtle
+	else:
+		GameVars.Gui_Node.count = false
+		GameVars.Gui_Node.level_end()
+		GameVars.Player.hide_arrow()
+"
+
+[node name="Marker_Manager" type="Spatial"]
+script = SubResource( 1 )
+MarkerArray = [ NodePath("") ]

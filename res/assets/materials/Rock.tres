@@ -1,0 +1,20 @@
+[gd_resource type="SpatialMaterial" load_steps=5 format=2]
+
+[ext_resource path="res://res/assets/textures/rock/normal.png" type="Texture" id=1]
+[ext_resource path="res://res/assets/textures/rock/albedo.png" type="Texture" id=2]
+[ext_resource path="res://res/assets/textures/rock/height.png" type="Texture" id=3]
+[ext_resource path="res://res/assets/textures/rock/roughness.png" type="Texture" id=4]
+
+[resource]
+albedo_texture = ExtResource( 2 )
+roughness_texture = ExtResource( 4 )
+roughness_texture_channel = 3
+normal_enabled = true
+normal_scale = 1.0
+normal_texture = ExtResource( 1 )
+depth_enabled = true
+depth_scale = 0.4
+depth_deep_parallax = false
+depth_flip_tangent = false
+depth_flip_binormal = false
+depth_texture = ExtResource( 3 )

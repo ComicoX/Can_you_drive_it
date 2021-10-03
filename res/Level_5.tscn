@@ -1,0 +1,146 @@
+[gd_scene load_steps=25 format=2]
+
+[ext_resource path="res://res/assets/env.tres" type="Environment" id=1]
+[ext_resource path="res://level_data_5/data.hterrain" type="Resource" id=2]
+[ext_resource path="res://addons/zylann.hterrain/hterrain.gd" type="Script" id=3]
+[ext_resource path="res://addons/zylann.hterrain/hterrain_texture_set.gd" type="Script" id=4]
+[ext_resource path="res://res/assets/GUI.tscn" type="PackedScene" id=6]
+[ext_resource path="res://res/assets/materials/floor_shader.tres" type="Material" id=7]
+[ext_resource path="res://res/assets/scripts/Options.tscn" type="PackedScene" id=8]
+[ext_resource path="res://res/assets/Car.tscn" type="PackedScene" id=13]
+[ext_resource path="res://res/assets/Marker.tscn" type="PackedScene" id=15]
+[ext_resource path="res://res/assets/Marker_Manager.tscn" type="PackedScene" id=16]
+[ext_resource path="res://res/assets/scripts/Level_util.gd" type="Script" id=21]
+[ext_resource path="res://res/Level_!_slot2_albedo_bump.packed_tex" type="Texture" id=26]
+[ext_resource path="res://res/Level_!_slot1_normal_roughness.packed_tex" type="Texture" id=27]
+[ext_resource path="res://res/Level_!_slot1_albedo_bump.packed_tex" type="Texture" id=28]
+[ext_resource path="res://res/Level_!_slot0_normal_roughness.packed_tex" type="Texture" id=29]
+[ext_resource path="res://res/Level_!_slot3_normal_roughness.packed_tex" type="Texture" id=30]
+[ext_resource path="res://res/Level_!_slot3_albedo_bump.packed_tex" type="Texture" id=31]
+[ext_resource path="res://res/Level_!_slot0_albedo_bump.packed_tex" type="Texture" id=32]
+[ext_resource path="res://res/Level_!_slot2_normal_roughness.packed_tex" type="Texture" id=33]
+[ext_resource path="res://res/assets/textures/road/Road007_1K_Color.jpg" type="Texture" id=34]
+
+[sub_resource type="Resource" id=1]
+script = ExtResource( 4 )
+mode = 0
+textures = [ [ ExtResource( 32 ), ExtResource( 28 ), ExtResource( 26 ), ExtResource( 31 ) ], [ ExtResource( 29 ), ExtResource( 27 ), ExtResource( 33 ), ExtResource( 30 ) ] ]
+
+[sub_resource type="Curve3D" id=2]
+_data = {
+"points": PoolVector3Array( 0, 0, 0, 0, 0, 0, -56.4215, 3.32556, 167.313, 0, 0, 0, 0, 0, 0, -50.2131, 0.189778, 80.2686, -40.6145, -2.5354, -13.7291, 40.6145, 2.5354, 13.7291, -12.3055, 2.03943, 20.0324, -8.55143, 2.87027, -23.1343, 8.55143, -2.87027, 23.1343, 60.8161, -3.58182, 84.6473, -37.2803, 0.0229492, -4.75919, 37.2803, -0.0229492, 4.75919, 112.686, -1.97853, 152.529, 0, 0, 0, 0, 0, 0, 187.607, -4.95561, 143.368, 7.31215, -0.0146484, 34.5258, -7.31215, 0.0146484, -34.5258, 221.125, 0.225932, 83.5602, 0, 0, 0, 0, 0, 0, 212.803, 3.98715, -18.7705, 0, 0, 0, 0, 0, 0, 220.732, 0.249171, -113.232, 15.7329, -0.0161133, 25.095, -15.7329, 0.0161133, -25.095, 218.422, -3.7362, -189.477, 16.7895, -0.0175781, 0.904602, -16.7895, 0.0175781, -0.904602, 160.484, 3.16394, -226.704, 0, 0, 0, 0, 0, 0, 102.206, 0.999881, -218.903, 19.2195, -0.0180664, 11.8829, -19.2195, 0.0180664, -11.8829, 35.5017, -3.41079, -196.252, 19.8738, -1.16197, 9.33069, -19.8738, 1.16197, -9.33069, -9.57471, -3.16416, -205.287, 0, 0, 0, 0, 0, 0, -61.3273, -7.11653, -220.087, 7.08295, -1.5131, -1.56833, -7.08295, 1.5131, 1.56833, -106.73, -2.59597, -210.881, 6.42978, -0.0102539, -35.541, -6.42978, 0.0102539, 35.541, -146.275, 0.0664508, -180.092, -21.5367, 0.0126953, -21.688, 21.5367, -0.0126953, 21.688, -78.1138, -1.77522, -89.4111, -12.3605, 0.00341797, 30.076, 12.3605, -0.00341797, -30.076, 7.89418, -4.34802, -92.8438, 0, 0, 0, 0, 0, 0, 94.0968, -2.93082, -128.086 ),
+"tilts": PoolRealArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
+}
+
+[sub_resource type="Shader" id=3]
+code = "shader_type spatial;
+
+uniform sampler2D road_texture;
+
+void fragment() {
+	vec2 road_uv = vec2(UV.y, UV.x);
+	vec4 color = texture(road_texture, road_uv);
+	ALBEDO = color.rgb;
+	METALLIC = 0.0;
+}"
+
+[sub_resource type="ShaderMaterial" id=4]
+shader = SubResource( 3 )
+shader_param/road_texture = ExtResource( 34 )
+
+[node name="Level" type="Spatial"]
+script = ExtResource( 21 )
+
+[node name="Car" parent="." instance=ExtResource( 13 )]
+transform = Transform( -0.996132, -0.0495673, 0.0725505, -0.0496246, 0.998767, 0.00101398, -0.072511, -0.00259018, -0.997364, -222.4, 0.412978, 29.3 )
+
+[node name="HTerrain" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -400, -19.664, -400 )
+script = ExtResource( 3 )
+_terrain_data = ExtResource( 2 )
+chunk_size = 32
+collision_enabled = true
+collision_layer = 3
+collision_mask = 1
+shader_type = "Classic4Lite"
+custom_shader = null
+custom_globalmap_shader = null
+texture_set = SubResource( 1 )
+render_layers = 1
+shader_params/u_ground_uv_scale = 20
+shader_params/u_depth_blending = true
+shader_params/u_triplanar = false
+shader_params/u_tile_reduction = Plane( 0, 0, 0, 0 )
+
+[node name="Road" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -168.23, -3.15124, -111.631 )
+
+[node name="Path" type="Path" parent="Road"]
+curve = SubResource( 2 )
+
+[node name="Road" type="CSGPolygon" parent="Road/Path"]
+use_in_baked_light = true
+use_collision = true
+collision_layer = 3
+collision_mask = 3
+invert_faces = true
+polygon = PoolVector2Array( -8, 0, -8, 0.1, 8, 0.1, 8, 0 )
+mode = 2
+path_node = NodePath("..")
+path_interval = 10.0
+path_rotation = 2
+path_local = false
+path_continuous_u = false
+path_joined = false
+smooth_faces = true
+material = SubResource( 4 )
+
+[node name="Ground" type="CSGPolygon" parent="Road/Path"]
+use_in_baked_light = true
+use_collision = true
+collision_layer = 3
+collision_mask = 3
+invert_faces = true
+polygon = PoolVector2Array( -11, 0, 11, -0.1, 14, -4, 14.1, -4.1, -14.1, -4.1, -14, -4 )
+mode = 2
+path_node = NodePath("..")
+path_interval = 1.0
+path_rotation = 2
+path_local = false
+path_continuous_u = false
+path_joined = false
+material = ExtResource( 7 )
+
+[node name="Marker_Manager" parent="." instance=ExtResource( 16 )]
+MarkerArray = [ NodePath("../Marker"), NodePath("../Marker2"), NodePath("../Marker3"), NodePath("../Marker4"), NodePath("../Marker5"), NodePath("../Marker6"), NodePath("../Marker7"), NodePath("../Marker8") ]
+
+[node name="Marker" parent="." instance=ExtResource( 15 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -220.9, -1.23719, 11.4 )
+
+[node name="Marker2" parent="." instance=ExtResource( 15 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -172, 1.24801, -89.1 )
+
+[node name="Marker3" parent="." instance=ExtResource( 15 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -68.6, -4.54608, 37.0478 )
+
+[node name="Marker4" parent="." instance=ExtResource( 15 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 45.5, -3.32222, 7.5 )
+
+[node name="Marker5" parent="." instance=ExtResource( 15 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 52.1527, -5.5406, -296.7 )
+
+[node name="Marker6" parent="." instance=ExtResource( 15 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -142.5, -7.1301, -312.1 )
+
+[node name="Marker7" parent="." instance=ExtResource( 15 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -301.561, 0.69679, -315.898 )
+
+[node name="Marker8" parent="." instance=ExtResource( 15 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -98.7098, -3.60744, -236.779 )
+
+[node name="Options" parent="." instance=ExtResource( 8 )]
+
+[node name="GUI" parent="." instance=ExtResource( 6 )]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource( 1 )

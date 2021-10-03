@@ -1,0 +1,171 @@
+[gd_scene load_steps=27 format=2]
+
+[ext_resource path="res://level_data_2/data.hterrain" type="Resource" id=1]
+[ext_resource path="res://addons/zylann.hterrain/hterrain.gd" type="Script" id=3]
+[ext_resource path="res://addons/zylann.hterrain/hterrain_texture_set.gd" type="Script" id=4]
+[ext_resource path="res://res/assets/env.tres" type="Environment" id=5]
+[ext_resource path="res://res/assets/GUI.tscn" type="PackedScene" id=6]
+[ext_resource path="res://res/assets/scripts/Options.tscn" type="PackedScene" id=8]
+[ext_resource path="res://res/assets/Car.tscn" type="PackedScene" id=13]
+[ext_resource path="res://res/assets/Marker.tscn" type="PackedScene" id=15]
+[ext_resource path="res://res/assets/Marker_Manager.tscn" type="PackedScene" id=16]
+[ext_resource path="res://res/Level_!_slot2_albedo_bump.packed_tex" type="Texture" id=26]
+[ext_resource path="res://res/Level_!_slot1_normal_roughness.packed_tex" type="Texture" id=27]
+[ext_resource path="res://res/Level_!_slot1_albedo_bump.packed_tex" type="Texture" id=28]
+[ext_resource path="res://res/Level_!_slot0_normal_roughness.packed_tex" type="Texture" id=29]
+[ext_resource path="res://res/Level_!_slot3_normal_roughness.packed_tex" type="Texture" id=30]
+[ext_resource path="res://res/Level_!_slot3_albedo_bump.packed_tex" type="Texture" id=31]
+[ext_resource path="res://res/Level_!_slot0_albedo_bump.packed_tex" type="Texture" id=32]
+[ext_resource path="res://res/Level_!_slot2_normal_roughness.packed_tex" type="Texture" id=33]
+[ext_resource path="res://res/assets/textures/road/Road007_1K_Color.jpg" type="Texture" id=34]
+[ext_resource path="res://res/assets/textures/grass/albedo.png" type="Texture" id=35]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Spatial
+
+func _ready():
+	GameVars.current_level = \"2\"
+	GameVars.in_game = true
+	GameVars.internal_score = 0
+	GameVars.save_game()
+"
+
+[sub_resource type="Resource" id=2]
+script = ExtResource( 4 )
+mode = 0
+textures = [ [ ExtResource( 32 ), ExtResource( 28 ), ExtResource( 26 ), ExtResource( 31 ) ], [ ExtResource( 29 ), ExtResource( 27 ), ExtResource( 33 ), ExtResource( 30 ) ] ]
+
+[sub_resource type="Curve3D" id=3]
+_data = {
+"points": PoolVector3Array( 0, 0, 0, 0, 0, 0, 270.815, 0.136432, -43.5597, -6.43555, -0.0513306, -64.6544, 6.43555, 0.0513306, 64.6544, 106.766, 9.19958, 24.3084, 0, 0, 0, 0, 0, 0, 11.1233, 0.301685, 161.364, 53.4164, -0.012146, -15.0544, -53.4164, 0.012146, 15.0544, -115.151, 0.338459, 206.275, -35.5183, 0.0428162, 53.2639, 35.5183, -0.0428162, -53.2639, -362.927, 0.186451, 12.8164, 1.77704, -1.08869, 4.44905, -1.77704, 1.08869, -4.44905, -342.409, -21.2081, -139.058, 0, 0, 0, 0, 0, 0, -248.559, -20.6821, -312.913, -40.9352, 0.00418091, 4.69775, 40.9352, -0.00418091, -4.69775, -134.898, -0.122052, -372.367, 0, 0, 0, 0, 0, 0, -58.1138, 0.0396916, -168.479 ),
+"tilts": PoolRealArray( 0, 0, 0, 0, 0, 0, 0, 0, 0 )
+}
+
+[sub_resource type="Shader" id=4]
+code = "shader_type spatial;
+
+uniform sampler2D road_texture;
+
+void fragment() {
+	vec2 road_uv = vec2(UV.y, UV.x);
+	vec4 color = texture(road_texture, road_uv);
+	ALBEDO = color.rgb;
+	METALLIC = 0.0;
+}"
+
+[sub_resource type="ShaderMaterial" id=5]
+shader = SubResource( 4 )
+shader_param/road_texture = ExtResource( 34 )
+
+[sub_resource type="Shader" id=6]
+code = "shader_type spatial;
+
+uniform sampler2D terrain_texture : hint_albedo;
+varying vec2 terrain_uv;
+
+void vertex() {
+	terrain_uv = (WORLD_MATRIX * vec4(VERTEX, 1.0)).xz * vec2(0.1, 0.1);
+}
+
+void fragment() {
+	vec4 color = texture(terrain_texture, terrain_uv);
+	ALBEDO = color.rgb;
+	METALLIC = 0.0;
+	ROUGHNESS = 0.8;
+}"
+
+[sub_resource type="ShaderMaterial" id=7]
+shader = SubResource( 6 )
+shader_param/terrain_texture = ExtResource( 35 )
+
+[node name="Level" type="Spatial"]
+script = SubResource( 1 )
+
+[node name="Car" parent="." instance=ExtResource( 13 )]
+transform = Transform( -0.982586, -0.0486386, -0.179326, -0.0496246, 0.998767, 0.00101398, 0.179056, 0.00989536, -0.983789, 329.4, 1.12306, 192.8 )
+
+[node name="HTerrain" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -150, -37.329, -150 )
+script = ExtResource( 3 )
+_terrain_data = ExtResource( 1 )
+chunk_size = 32
+collision_enabled = true
+collision_layer = 3
+collision_mask = 1
+shader_type = "Classic4Lite"
+custom_shader = null
+custom_globalmap_shader = null
+texture_set = SubResource( 2 )
+render_layers = 1
+shader_params/u_ground_uv_scale = 20
+shader_params/u_depth_blending = true
+shader_params/u_triplanar = false
+shader_params/u_tile_reduction = Plane( 0, 0, 0, 0 )
+
+[node name="Road" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 390.118, -0.173267, 377.946 )
+
+[node name="Path" type="Path" parent="Road"]
+curve = SubResource( 3 )
+
+[node name="Road" type="CSGPolygon" parent="Road/Path"]
+use_collision = true
+collision_layer = 3
+collision_mask = 3
+invert_faces = true
+polygon = PoolVector2Array( -8, 0, -8, 0.1, 8, 0.1, 8, 0 )
+mode = 2
+path_node = NodePath("..")
+path_interval = 10.0
+path_rotation = 2
+path_local = false
+path_continuous_u = false
+path_joined = false
+smooth_faces = true
+material = SubResource( 5 )
+
+[node name="Ground" type="CSGPolygon" parent="Road/Path"]
+use_collision = true
+collision_layer = 3
+collision_mask = 3
+invert_faces = true
+polygon = PoolVector2Array( -11, 0, 11, -0.1, 14, -4, 14.1, -4.1, -14.1, -4.1, -14, -4 )
+mode = 2
+path_node = NodePath("..")
+path_interval = 1.0
+path_rotation = 2
+path_local = false
+path_continuous_u = false
+path_joined = false
+material = SubResource( 7 )
+
+[node name="Marker_Manager" parent="." instance=ExtResource( 16 )]
+MarkerArray = [ NodePath("../Marker"), NodePath("../Marker2"), NodePath("../Marker3"), NodePath("../Marker4"), NodePath("../Marker5"), NodePath("../Marker6"), NodePath("../Marker7") ]
+
+[node name="Marker" parent="." instance=ExtResource( 15 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 325.8, 1.42385, 171.8 )
+
+[node name="Marker2" parent="." instance=ExtResource( 15 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 260.9, 0.538013, 6.64847 )
+
+[node name="Marker3" parent="." instance=ExtResource( 15 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 128.9, -18.2, 88.9 )
+
+[node name="Marker4" parent="." instance=ExtResource( 15 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 27.5339, 1.47827, 420.7 )
+
+[node name="Marker5" parent="." instance=ExtResource( 15 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 264.5, 1.34198, 585.7 )
+
+[node name="Marker6" parent="." instance=ExtResource( 15 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 447.2, 5.83903, 499.6 )
+
+[node name="Marker7" parent="." instance=ExtResource( 15 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 608.5, 3.47219, 338.407 )
+
+[node name="Options" parent="." instance=ExtResource( 8 )]
+
+[node name="GUI" parent="." instance=ExtResource( 6 )]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource( 5 )

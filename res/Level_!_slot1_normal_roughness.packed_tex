@@ -1,0 +1,8 @@
+{
+	"contains_albedo": false,
+	"resolution": 1024,
+	"src": {
+		"a": "res://res/assets/textures/dirt/roughness.png",
+		"rgb": "res://res/assets/textures/dirt/normal.png"
+	}
+}

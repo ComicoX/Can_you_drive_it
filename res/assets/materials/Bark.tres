@@ -1,0 +1,19 @@
+[gd_resource type="SpatialMaterial" load_steps=4 format=2]
+
+[ext_resource path="res://res/assets/textures/leather_white/roughness.png" type="Texture" id=1]
+[ext_resource path="res://res/assets/textures/leather_white/height.png" type="Texture" id=2]
+[ext_resource path="res://res/assets/textures/leather_white/normal.png" type="Texture" id=3]
+
+[resource]
+albedo_color = Color( 0.286275, 0.14902, 0.0823529, 1 )
+roughness_texture = ExtResource( 1 )
+roughness_texture_channel = 4
+normal_enabled = true
+normal_scale = 1.0
+normal_texture = ExtResource( 3 )
+depth_enabled = true
+depth_scale = 0.05
+depth_deep_parallax = false
+depth_flip_tangent = false
+depth_flip_binormal = false
+depth_texture = ExtResource( 2 )

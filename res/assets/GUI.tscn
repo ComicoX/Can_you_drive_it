@@ -1,0 +1,517 @@
+[gd_scene load_steps=3 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Control
+
+var count = false
+
+var time = \"00:00:00\"
+var score = \"Score: 0\"
+
+var last_level = false
+
+func _ready():
+	update_Checpoint_label(GameVars.current_checkpoint, GameVars.total_checkpoints)
+	GameVars.Gui_Node = self
+	if(!GameVars.TutDone):
+		$Tutorial.show()
+		get_tree().paused = true
+
+func update_Checpoint_label(var current, var total):
+	$In_Game_UI/V/HBoxContainer2/Checkpoint_Label.text = \"Checkpoint \" + String(current) + \"/\" + String(total)
+
+func _process(delta):
+	if(count):
+		$In_Game_UI/V/HBoxContainer/TimeLabel.show()
+		display_time()
+	display_score()
+
+func display_time():
+	time = String(OS.get_time().hour - GameVars.Start_TIme.hour) + \":0\" + String(OS.get_time().minute - GameVars.Start_TIme.minute) + \":\" + String(OS.get_time().second - GameVars.Start_TIme.second)
+	var dTime = \"Time: 0\" + time
+	$In_Game_UI/V/HBoxContainer/TimeLabel.text = dTime
+
+func display_score():
+	score = GameVars.internal_score
+	var dScroe =  \"Score: \" + String(score)
+	$In_Game_UI/V/HBoxContainer/Score.text = dScroe
+
+func _on_Options_Button_pressed():
+	$Tutorial.hide()
+	GameVars.toggle_options(true)
+
+func _on_Start_Button_pressed():
+	$In_Game_UI.show()
+	$Tutorial.hide()
+	GameVars.TutDone = true
+	get_tree().paused = false
+
+func level_end():
+	var dScroe =  \"Score: \" + String(score)
+	if(!last_level):
+		$Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/Text_Time.text = \"Time: \" + String(time)
+		$Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/Text_Score.text = dScroe
+		$In_Game_UI.hide()
+		get_tree().paused = true
+	
+		$Level_End.show()
+	else:
+		$In_Game_UI.hide()
+		get_tree().paused = true
+		$Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/CenterContainer/HBoxContainer/Next_Level.hide()
+		$Level_End.show()
+		
+		var lvl1TimeLabel = $Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/Text_Time 
+		lvl1TimeLabel.text = \"Time: \" + String(GameVars.level_time[1])
+		var lvl1ScoreLabel = $Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/Text_Score
+		lvl1ScoreLabel.text = \"Score: \" + String(GameVars.level_score[1])
+		
+		var lvl2TimeLabel = $Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/Text_Time2
+		lvl2TimeLabel.text = \"Time: \" + String(GameVars.level_time[2])
+		lvl2TimeLabel.show()
+		var lvl2ScoreLabel = $Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/Text_Score2
+		lvl2ScoreLabel.text = \"Score: \" + String(GameVars.level_score[2])
+		lvl2ScoreLabel.show()
+		
+		var lvl3TimeLabel = $Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/Text_Time3
+		lvl3TimeLabel.text = \"Time: \" + String(GameVars.level_time[3])
+		lvl3TimeLabel.show()
+		var lvl3ScoreLabel = $Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/Text_Score3
+		lvl3ScoreLabel.text = \"Score: \" + String(GameVars.level_score[3])
+		lvl3ScoreLabel.show()
+		
+		var lvl4TimeLabel = $Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/Text_Time4
+		lvl4TimeLabel.text = \"Time: \" + String(GameVars.level_time[4])
+		lvl4TimeLabel.show()
+		var lvl4ScoreLabel = $Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/Text_Score4
+		lvl4ScoreLabel.text = \"Score: \" + String(GameVars.level_score[4])
+		lvl4ScoreLabel.show()
+		
+		var lvl5TimeLabel = $Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/Text_Time5
+		lvl5TimeLabel.text = \"Time: \" + String(GameVars.level_time[5])
+		lvl5TimeLabel.show()
+		var lvl5ScoreLabel = $Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/Text_Score5
+		lvl5ScoreLabel.text = \"Score: \" + String(GameVars.level_score[5])
+		lvl5ScoreLabel.show()
+
+func _on_Restart_Level_pressed():
+	get_tree().reload_current_scene()
+
+func _on_Next_Level_pressed():
+	GameVars.level_time[int(GameVars.current_level) - 1] = time
+	GameVars.level_score[int(GameVars.current_level) -1 ] = score
+	GameVars.save_game()
+	var level = \"res://res/Level_\" + String(int(GameVars.current_level) + 1) + \".tscn\"
+	LoadingSys.load_scene(level)
+"
+
+[sub_resource type="StyleBoxFlat" id=2]
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.188235, 0.188235, 0.188235, 1 )
+
+[node name="GUI" type="Control"]
+pause_mode = 2
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="In_Game_UI" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="V" type="VBoxContainer" parent="In_Game_UI"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 50.0
+margin_top = 50.0
+margin_right = -50.0
+margin_bottom = -50.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="In_Game_UI/V"]
+margin_right = 924.0
+margin_bottom = 20.0
+
+[node name="TimeLabel" type="Label" parent="In_Game_UI/V/HBoxContainer"]
+margin_right = 100.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 100, 20 )
+custom_styles/normal = SubResource( 2 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Time: 00:00:0"
+
+[node name="Score" type="Label" parent="In_Game_UI/V/HBoxContainer"]
+margin_left = 104.0
+margin_right = 204.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 100, 20 )
+custom_styles/normal = SubResource( 2 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Score: 0"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="In_Game_UI/V"]
+margin_top = 24.0
+margin_right = 924.0
+margin_bottom = 44.0
+
+[node name="Checkpoint_Label" type="Label" parent="In_Game_UI/V/HBoxContainer2"]
+margin_top = 1.0
+margin_right = 100.0
+margin_bottom = 19.0
+rect_min_size = Vector2( 100, 15 )
+custom_styles/normal = SubResource( 2 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Checkpoint 1/2"
+
+[node name="Spacer" type="Control" parent="In_Game_UI/V/HBoxContainer2"]
+margin_left = 104.0
+margin_right = 114.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 10, 0 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Control" type="Control" parent="In_Game_UI/V/HBoxContainer2"]
+margin_left = 118.0
+margin_right = 218.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 100, 20 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Tutorial" type="Control" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Tutorial"]
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_top = -40.0
+margin_bottom = 40.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CenterContainer" type="CenterContainer" parent="Tutorial/VBoxContainer"]
+margin_right = 1024.0
+margin_bottom = 158.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="Tutorial/VBoxContainer/CenterContainer"]
+margin_left = 510.0
+margin_top = 77.0
+margin_right = 514.0
+margin_bottom = 81.0
+
+[node name="PanelContainer" type="PanelContainer" parent="Tutorial/VBoxContainer/CenterContainer/AspectRatioContainer"]
+margin_right = 4.0
+margin_bottom = 4.0
+custom_styles/panel = SubResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Tutorial/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer"]
+margin_left = 2.0
+margin_top = 2.0
+margin_right = 456.0
+margin_bottom = 156.0
+
+[node name="Spacer2" type="Control" parent="Tutorial/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer"]
+margin_right = 454.0
+margin_bottom = 10.0
+rect_min_size = Vector2( 150, 10 )
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Tutorial/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer"]
+margin_top = 14.0
+margin_right = 454.0
+margin_bottom = 104.0
+
+[node name="Spacer" type="Control" parent="Tutorial/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/HBoxContainer2"]
+margin_right = 10.0
+margin_bottom = 90.0
+rect_min_size = Vector2( 10, 0 )
+
+[node name="Helper_Text" type="RichTextLabel" parent="Tutorial/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/HBoxContainer2"]
+margin_left = 14.0
+margin_right = 454.0
+margin_bottom = 90.0
+rect_min_size = Vector2( 440, 90 )
+custom_colors/default_color = Color( 0, 0, 0, 1 )
+text = "Go as fast as posible and run away with your weird unstable car.
+
+Controls: 
+	Left to accelerate the left side and right click for the right side... 
+	'W' breaking with the front wheels
+	'S' breaking with the back wheels.. Good luck!"
+scroll_active = false
+
+[node name="Spacer3" type="Control" parent="Tutorial/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer"]
+margin_top = 108.0
+margin_right = 454.0
+margin_bottom = 118.0
+rect_min_size = Vector2( 150, 10 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Tutorial/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer"]
+margin_top = 122.0
+margin_right = 454.0
+margin_bottom = 140.0
+
+[node name="Spacer" type="Control" parent="Tutorial/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/HBoxContainer"]
+margin_right = 150.0
+margin_bottom = 18.0
+rect_min_size = Vector2( 150, 0 )
+
+[node name="Options_Button" type="Button" parent="Tutorial/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/HBoxContainer"]
+margin_left = 154.0
+margin_right = 209.0
+margin_bottom = 18.0
+custom_styles/normal = SubResource( 2 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Options"
+
+[node name="Start_Button" type="Button" parent="Tutorial/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/HBoxContainer"]
+margin_left = 213.0
+margin_right = 265.0
+margin_bottom = 18.0
+custom_styles/normal = SubResource( 2 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Thanks!"
+
+[node name="Spacer" type="Control" parent="Tutorial/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer"]
+margin_top = 144.0
+margin_right = 454.0
+margin_bottom = 154.0
+rect_min_size = Vector2( 150, 10 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Level_End" type="Control" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Level_End"]
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_top = -40.0
+margin_bottom = 40.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CenterContainer" type="CenterContainer" parent="Level_End/VBoxContainer"]
+margin_right = 1024.0
+margin_bottom = 100.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="Level_End/VBoxContainer/CenterContainer"]
+margin_left = 510.0
+margin_top = 48.0
+margin_right = 514.0
+margin_bottom = 52.0
+
+[node name="PanelContainer" type="PanelContainer" parent="Level_End/VBoxContainer/CenterContainer/AspectRatioContainer"]
+margin_right = 4.0
+margin_bottom = 4.0
+custom_styles/panel = SubResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer"]
+margin_left = 2.0
+margin_top = 2.0
+margin_right = 252.0
+margin_bottom = 98.0
+
+[node name="Spacer2" type="Control" parent="Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer"]
+margin_right = 250.0
+margin_bottom = 10.0
+rect_min_size = Vector2( 150, 10 )
+
+[node name="Text_Time" type="Label" parent="Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer"]
+margin_top = 14.0
+margin_right = 250.0
+margin_bottom = 28.0
+rect_min_size = Vector2( 250, 10 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "TIME:"
+align = 1
+valign = 1
+
+[node name="Text_Score" type="Label" parent="Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer"]
+margin_top = 32.0
+margin_right = 250.0
+margin_bottom = 46.0
+rect_min_size = Vector2( 250, 10 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "SCORE:"
+align = 1
+valign = 1
+
+[node name="Text_Time2" type="Label" parent="Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer"]
+visible = false
+margin_top = 50.0
+margin_right = 250.0
+margin_bottom = 64.0
+rect_min_size = Vector2( 250, 10 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "TIME:"
+align = 1
+valign = 1
+
+[node name="Text_Score2" type="Label" parent="Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer"]
+visible = false
+margin_top = 50.0
+margin_right = 250.0
+margin_bottom = 64.0
+rect_min_size = Vector2( 250, 10 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "SCORE:"
+align = 1
+valign = 1
+
+[node name="Text_Time3" type="Label" parent="Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer"]
+visible = false
+margin_top = 86.0
+margin_right = 250.0
+margin_bottom = 100.0
+rect_min_size = Vector2( 250, 10 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "TIME:"
+align = 1
+valign = 1
+
+[node name="Text_Score3" type="Label" parent="Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer"]
+visible = false
+margin_top = 104.0
+margin_right = 250.0
+margin_bottom = 118.0
+rect_min_size = Vector2( 250, 10 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "SCORE:"
+align = 1
+valign = 1
+
+[node name="Text_Time4" type="Label" parent="Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer"]
+visible = false
+margin_top = 122.0
+margin_right = 250.0
+margin_bottom = 136.0
+rect_min_size = Vector2( 250, 10 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "TIME:"
+align = 1
+valign = 1
+
+[node name="Text_Score4" type="Label" parent="Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer"]
+visible = false
+margin_top = 140.0
+margin_right = 250.0
+margin_bottom = 154.0
+rect_min_size = Vector2( 250, 10 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "SCORE:"
+align = 1
+valign = 1
+
+[node name="Text_Time5" type="Label" parent="Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer"]
+visible = false
+margin_top = 158.0
+margin_right = 250.0
+margin_bottom = 172.0
+rect_min_size = Vector2( 250, 10 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "TIME:"
+align = 1
+valign = 1
+
+[node name="Text_Score5" type="Label" parent="Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer"]
+visible = false
+margin_top = 176.0
+margin_right = 250.0
+margin_bottom = 190.0
+rect_min_size = Vector2( 250, 10 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "SCORE:"
+align = 1
+valign = 1
+
+[node name="Spacer3" type="Control" parent="Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer"]
+margin_top = 50.0
+margin_right = 250.0
+margin_bottom = 60.0
+rect_min_size = Vector2( 150, 10 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CenterContainer" type="CenterContainer" parent="Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer"]
+margin_top = 64.0
+margin_right = 250.0
+margin_bottom = 82.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/CenterContainer"]
+margin_left = 43.0
+margin_right = 206.0
+margin_bottom = 18.0
+
+[node name="Restart_Level" type="Button" parent="Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/CenterContainer/HBoxContainer"]
+margin_right = 87.0
+margin_bottom = 18.0
+custom_styles/normal = SubResource( 2 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Restart Level"
+
+[node name="Next_Level" type="Button" parent="Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/CenterContainer/HBoxContainer"]
+margin_left = 91.0
+margin_right = 163.0
+margin_bottom = 18.0
+custom_styles/normal = SubResource( 2 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Next Level"
+
+[node name="Spacer" type="Control" parent="Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer"]
+margin_top = 86.0
+margin_right = 250.0
+margin_bottom = 96.0
+rect_min_size = Vector2( 150, 10 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="pressed" from="Tutorial/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/HBoxContainer/Options_Button" to="." method="_on_Options_Button_pressed"]
+[connection signal="pressed" from="Tutorial/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/HBoxContainer/Start_Button" to="." method="_on_Start_Button_pressed"]
+[connection signal="pressed" from="Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/CenterContainer/HBoxContainer/Restart_Level" to="." method="_on_Restart_Level_pressed"]
+[connection signal="pressed" from="Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/CenterContainer/HBoxContainer/Next_Level" to="." method="_on_Next_Level_pressed"]

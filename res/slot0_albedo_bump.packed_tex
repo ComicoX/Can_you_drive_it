@@ -1,0 +1,8 @@
+{
+	"contains_albedo": true,
+	"resolution": 1024,
+	"src": {
+		"a": "res://res/assets/textures/rock/height.png",
+		"rgb": "res://res/assets/textures/rock/albedo.png"
+	}
+}

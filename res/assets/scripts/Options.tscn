@@ -1,0 +1,270 @@
+[gd_scene load_steps=3 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Control
+
+var string_key = \"fw\"
+var mouse_inverted = false
+var fw_key = \"no\"
+var rw_key = \"no\"
+var fullscreen = false
+
+func _ready():
+	GameVars.Options = self
+	restore_settings()
+
+func restore_settings():
+	mouse_inverted = GameVars.mouse_inverted
+	fw_key = GameVars.fw_key
+	rw_key = GameVars.rw_key
+	fullscreen = GameVars.fullscreen
+	
+	if(mouse_inverted):
+		_invert_mouse()
+		$CenterContainer/Options/Control_Acc.pressed = true
+		
+	OS.window_fullscreen = fullscreen
+	$CenterContainer/Remap_Helper.hide()
+	$CenterContainer/Options/FullScreen.pressed = OS.window_fullscreen
+
+func _on_FullScreen_pressed():
+	OS.window_fullscreen = !OS.window_fullscreen
+	fullscreen = OS.window_fullscreen
+
+func _on_Control_Acc_pressed():
+	mouse_inverted = true
+	_invert_mouse()
+
+func _on_Break_F_pressed():
+	string_key = \"fw\"
+	_toggle_mapper(true)
+
+func _on_Break_R_pressed():
+	string_key = \"rw\"
+	_toggle_mapper(true)
+
+func _toggle_mapper(var status):
+	$CenterContainer/Options.visible = !status
+	$CenterContainer/Remap_Helper.visible = status
+
+func _show_exit(var status):
+	$CenterContainer/Options.visible = !status
+	$CenterContainer/Sure.visible = status
+
+func _process(delta):
+	if Input.is_action_just_pressed(\"ui_cancel\"):
+		if($CenterContainer/Remap_Helper.visible and !$CenterContainer/Sure.visible):
+			_toggle_mapper(false)
+		elif(!GameVars.in_game):
+			_show_exit(true)
+		elif(!self.visible):
+			GameVars.toggle_options(true)
+		else:
+			GameVars.toggle_options(false)
+
+func _unhandled_input(event):
+	if event is InputEventKey:
+		if event.pressed and event.scancode != KEY_ESCAPE:
+			InputMap.action_erase_events(string_key)
+			InputMap.action_add_event(string_key, event)
+			_toggle_mapper(false)
+			if(string_key == \"fw\"):
+				fw_key = event
+			elif(string_key == \"rw\"):
+				rw_key = event
+
+func _on_No_pressed():
+	_show_exit(false)
+
+func _on_Yes_pressed():
+	get_tree().quit()
+
+func _on_QtMM_pressed():
+	if(GameVars.ManiMenu):
+		GameVars.toggle_options(false, true)
+	else:
+		LoadingSys.load_scene(\"res://res/assets/scripts/Main_Menu.tscn\")
+
+func _invert_mouse():
+	var left_click_event = InputMap.get_action_list(\"left_click\")
+	var right_click_event = InputMap.get_action_list(\"right_click\")
+	InputMap.action_erase_events(\"left_click\")
+	InputMap.action_add_event(\"left_click\", right_click_event[0])
+	InputMap.action_erase_events(\"right_click\")
+	InputMap.action_add_event(\"right_click\", left_click_event[0])
+
+
+func _on_Quit_Game_pressed():
+	_show_exit(true)
+"
+
+[sub_resource type="StyleBoxFlat" id=2]
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.188235, 0.188235, 0.188235, 1 )
+
+[node name="Options" type="Control"]
+pause_mode = 2
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Options" type="VBoxContainer" parent="CenterContainer"]
+margin_left = 411.0
+margin_top = 245.0
+margin_right = 613.0
+margin_bottom = 355.0
+
+[node name="Control_Acc" type="CheckBox" parent="CenterContainer/Options"]
+margin_right = 202.0
+margin_bottom = 20.0
+custom_styles/pressed = SubResource( 2 )
+custom_styles/normal = SubResource( 2 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Switch left and right click"
+align = 1
+
+[node name="FullScreen" type="CheckBox" parent="CenterContainer/Options"]
+margin_top = 24.0
+margin_right = 202.0
+margin_bottom = 44.0
+custom_styles/pressed = SubResource( 2 )
+custom_styles/normal = SubResource( 2 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "FullScreen"
+align = 1
+
+[node name="Break_F" type="Button" parent="CenterContainer/Options"]
+margin_top = 48.0
+margin_right = 202.0
+margin_bottom = 66.0
+custom_styles/normal = SubResource( 2 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Front Break"
+
+[node name="Break_R" type="Button" parent="CenterContainer/Options"]
+margin_top = 70.0
+margin_right = 202.0
+margin_bottom = 88.0
+custom_styles/normal = SubResource( 2 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Read Break"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/Options"]
+margin_top = 92.0
+margin_right = 202.0
+margin_bottom = 110.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="QtMM" type="Button" parent="CenterContainer/Options/HBoxContainer"]
+margin_right = 124.0
+margin_bottom = 18.0
+custom_styles/normal = SubResource( 2 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Quit to Main Menu"
+
+[node name="Quit_Game" type="Button" parent="CenterContainer/Options/HBoxContainer"]
+margin_left = 128.0
+margin_right = 202.0
+margin_bottom = 18.0
+custom_styles/normal = SubResource( 2 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Quit Game"
+
+[node name="Remap_Helper" type="PanelContainer" parent="CenterContainer"]
+visible = false
+margin_left = 510.0
+margin_top = 298.0
+margin_right = 514.0
+margin_bottom = 302.0
+custom_styles/panel = SubResource( 2 )
+
+[node name="Remap_Label_Text" type="Label" parent="CenterContainer/Remap_Helper"]
+margin_left = 2.0
+margin_top = 2.0
+margin_right = 167.0
+margin_bottom = 67.0
+rect_min_size = Vector2( 165, 60 )
+text = "Press any key to remap...
+
+
+press ESC to cancel"
+align = 1
+valign = 1
+
+[node name="Sure" type="PanelContainer" parent="CenterContainer"]
+visible = false
+margin_left = 510.0
+margin_top = 298.0
+margin_right = 514.0
+margin_bottom = 302.0
+custom_styles/panel = SubResource( 2 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/Sure"]
+margin_left = 2.0
+margin_top = 2.0
+margin_right = 167.0
+margin_bottom = 84.0
+rect_min_size = Vector2( 165, 60 )
+
+[node name="Remap_Label_Text" type="Label" parent="CenterContainer/Sure/VBoxContainer"]
+margin_right = 165.0
+margin_bottom = 60.0
+rect_min_size = Vector2( 165, 60 )
+text = "Are you sure you want to
+exit?"
+align = 1
+valign = 1
+
+[node name="CenterContainer" type="CenterContainer" parent="CenterContainer/Sure/VBoxContainer"]
+margin_top = 64.0
+margin_right = 165.0
+margin_bottom = 82.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/Sure/VBoxContainer/CenterContainer"]
+margin_left = 43.0
+margin_right = 121.0
+margin_bottom = 18.0
+
+[node name="No" type="Button" parent="CenterContainer/Sure/VBoxContainer/CenterContainer/HBoxContainer"]
+margin_right = 25.0
+margin_bottom = 18.0
+custom_styles/normal = SubResource( 2 )
+text = "NO"
+
+[node name="Control" type="Control" parent="CenterContainer/Sure/VBoxContainer/CenterContainer/HBoxContainer"]
+margin_left = 29.0
+margin_right = 49.0
+margin_bottom = 18.0
+rect_min_size = Vector2( 20, 0 )
+
+[node name="Yes" type="Button" parent="CenterContainer/Sure/VBoxContainer/CenterContainer/HBoxContainer"]
+margin_left = 53.0
+margin_right = 78.0
+margin_bottom = 18.0
+custom_styles/normal = SubResource( 2 )
+text = "YES"
+
+[connection signal="pressed" from="CenterContainer/Options/Control_Acc" to="." method="_on_Control_Acc_pressed"]
+[connection signal="pressed" from="CenterContainer/Options/FullScreen" to="." method="_on_FullScreen_pressed"]
+[connection signal="pressed" from="CenterContainer/Options/Break_F" to="." method="_on_Break_F_pressed"]
+[connection signal="pressed" from="CenterContainer/Options/Break_R" to="." method="_on_Break_R_pressed"]
+[connection signal="pressed" from="CenterContainer/Options/HBoxContainer/QtMM" to="." method="_on_QtMM_pressed"]
+[connection signal="pressed" from="CenterContainer/Options/HBoxContainer/Quit_Game" to="." method="_on_Quit_Game_pressed"]
+[connection signal="pressed" from="CenterContainer/Sure/VBoxContainer/CenterContainer/HBoxContainer/No" to="." method="_on_No_pressed"]
+[connection signal="pressed" from="CenterContainer/Sure/VBoxContainer/CenterContainer/HBoxContainer/Yes" to="." method="_on_Yes_pressed"]
