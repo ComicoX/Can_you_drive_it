@@ -62,36 +62,36 @@ func level_end():
 		$Level_End.show()
 		
 		var lvl1TimeLabel = $Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/Text_Time 
-		lvl1TimeLabel.text = \"Time: \" + String(GameVars.level_time[1])
+		lvl1TimeLabel.text = \"Time: \" + String(GameVars.level_time[0])
 		var lvl1ScoreLabel = $Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/Text_Score
-		lvl1ScoreLabel.text = \"Score: \" + String(GameVars.level_score[1])
+		lvl1ScoreLabel.text = \"Score: \" + String(GameVars.level_score[0])
 		
 		var lvl2TimeLabel = $Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/Text_Time2
-		lvl2TimeLabel.text = \"Time: \" + String(GameVars.level_time[2])
+		lvl2TimeLabel.text = \"Time: \" + String(GameVars.level_time[1])
 		lvl2TimeLabel.show()
 		var lvl2ScoreLabel = $Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/Text_Score2
-		lvl2ScoreLabel.text = \"Score: \" + String(GameVars.level_score[2])
+		lvl2ScoreLabel.text = \"Score: \" + String(GameVars.level_score[1])
 		lvl2ScoreLabel.show()
 		
 		var lvl3TimeLabel = $Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/Text_Time3
-		lvl3TimeLabel.text = \"Time: \" + String(GameVars.level_time[3])
+		lvl3TimeLabel.text = \"Time: \" + String(GameVars.level_time[2])
 		lvl3TimeLabel.show()
 		var lvl3ScoreLabel = $Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/Text_Score3
-		lvl3ScoreLabel.text = \"Score: \" + String(GameVars.level_score[3])
+		lvl3ScoreLabel.text = \"Score: \" + String(GameVars.level_score[2])
 		lvl3ScoreLabel.show()
 		
 		var lvl4TimeLabel = $Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/Text_Time4
-		lvl4TimeLabel.text = \"Time: \" + String(GameVars.level_time[4])
+		lvl4TimeLabel.text = \"Time: \" + String(GameVars.level_time[3])
 		lvl4TimeLabel.show()
 		var lvl4ScoreLabel = $Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/Text_Score4
-		lvl4ScoreLabel.text = \"Score: \" + String(GameVars.level_score[4])
+		lvl4ScoreLabel.text = \"Score: \" + String(GameVars.level_score[3])
 		lvl4ScoreLabel.show()
 		
 		var lvl5TimeLabel = $Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/Text_Time5
-		lvl5TimeLabel.text = \"Time: \" + String(GameVars.level_time[5])
+		lvl5TimeLabel.text = \"Time: \" + String(GameVars.level_time[4])
 		lvl5TimeLabel.show()
 		var lvl5ScoreLabel = $Level_End/VBoxContainer/CenterContainer/AspectRatioContainer/PanelContainer/VBoxContainer/Text_Score5
-		lvl5ScoreLabel.text = \"Score: \" + String(GameVars.level_score[5])
+		lvl5ScoreLabel.text = \"Score: \" + String(GameVars.level_score[4])
 		lvl5ScoreLabel.show()
 
 func _on_Restart_Level_pressed():
